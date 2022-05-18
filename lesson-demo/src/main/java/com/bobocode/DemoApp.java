@@ -1,24 +1,71 @@
 package com.bobocode;
 
-import java.util.Comparator;
-import java.util.stream.Stream;
+import java.util.Stack;
 
 public class DemoApp {
     public static void main(String[] args) {
-        Comparator<User> userComparator = new RandomFieldComparator<>(User.class, false);
-//        Comparator<User> userComparator = new RandomFieldComparator<>(User.class);
-        User user1 = new User("Pavlo", "Tychyna", "male", 20);
-        User user2 = new User("Taras", "Shevchenko", "male", 50);
-        User user3 = new User("Lesya", "Ukrainka", "female", 30);
-        User user4 = new User("Agata", null, "female", 60);
-        User user5 = new User("Sofy", null, "female", 64);
-        User user6 = new User(null, null, "female", 54);
-        User user7 = new User(null, null, "female", 55);
-        User user8 = new User(null, "Kipling", "male", 75);
-        User user9 = new User(null, "Linkoln", "male", 76);
+        var head = createLinkedList(4, 3, 9, 1);
+        printReversedRecursively(head);
+        printReversedUsingStack(head);
+    }
 
-        Stream.of(user9, user6, user7, user8, user5, user3, user4,user2, user1).sorted(userComparator).forEach(System.out::println);
+    /**
+     * Creates a list of linked {@link Node} objects based on the given array of elements and returns a head of the list.
+     *
+     * @param elements an array of elements that should be added to the list
+     * @param <T>      elements type
+     * @return head of the list
+     */
+    public static <T> Node<T> createLinkedList(T... elements) {
+        Node<T> head = new Node<>(elements[0]);
+        Node<T> currentNode = head;
+        for (int i = 1; i < elements.length; i++) {
+            currentNode.next = new Node<>(elements[i]);
+            currentNode = currentNode.next;
+        }
+        return head;
+    }
 
-        System.out.println(userComparator);
+    /**
+     * Prints a list in a reserved order using a recursion technique. Please note that it should not change the list,
+     * just print its elements.
+     * <p>
+     * Imagine you have a list of elements 4,3,9,1 and the current head is 4. Then the outcome should be the following:
+     * 1 -> 9 -> 3 -> 4
+     *
+     * @param head the first node of the list
+     * @param <T>  elements type
+     */
+    public static <T> void printReversedRecursively(Node<T> head) {
+        if (head == null) return;
+        printReversedRecursively(head.next);
+        if (head.next != null) System.out.print(" -> ");
+        System.out.print(head.element);
+    }
+
+    /**
+     * Prints a list in a reserved order using a {@link java.util.Stack} instance. Please note that it should not change
+     * the list, just print its elements.
+     * <p>
+     * Imagine you have a list of elements 4,3,9,1 and the current head is 4. Then the outcome should be the following:
+     * 1 -> 9 -> 3 -> 4
+     *
+     * @param head the first node of the list
+     * @param <T>  elements type
+     */
+    public static <T> void printReversedUsingStack(Node<T> head) {
+        System.out.println();
+        Stack<Node<T>> stack = new Stack<>();
+        while (head != null) {
+            stack.push(head);
+            head = head.next;
+        }
+
+        while (!stack.empty()) {
+            Node<T> current = stack.pop();
+            if (current.next != null) System.out.print(" -> ");
+            System.out.print(current.element);
+        }
+        System.out.println();
     }
 }
